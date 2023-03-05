@@ -6,10 +6,10 @@ const FileUploader = ({ onFileLoad }) => {
 };
 
 const CodeEditor = () => {
-	const [code, setCode] = useState('// type your code... \n');
+	const [code, setCode] = useState('');
 	const [theme, setTheme] = useState('vs-light');
 	const [file, setFile] = useState();
-	// const [value, setValue] = useState();
+	const [language, setLanguage] = useState('javascript');
 
 	useEffect(() => {
 		if (file) {
@@ -18,114 +18,40 @@ const CodeEditor = () => {
 				setCode(e.target.result);
 			};
 			reader.readAsText(file);
+			let newLanguage = 'javascript';
+			const extension = file.name.split('.').pop();
+			if (['css', 'html', 'json', 'python', 'dart'].includes(extension)) {
+				newLanguage = extension;
+			}
+			setLanguage(newLanguage);
 		}
 	}, [file]);
 
-	// const editorWillMount = (monaco) => {
-	// monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-	// 	noSemanticValidation: true,
-	// 	noSyntaxValidation: false
-	// });
-
-	// monaco.languages.javascript.javascriptDefaults.setDiagnosticsOptions({
-	// 	noSemanticValidation: false,
-	// 	noSyntaxValidation: false,
-	// });
-	// monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-	// 	noSemanticValidation: false,
-	// 	noSyntaxValidation: false,
-	// });
-	// validation settings
-	// monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-	// 	noSemanticValidation: true,
-	// 	noSyntaxValidation: false,
-	// });
-
-	// // compiler options
-	// monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-	// 	target: monaco.languages.typescript.ScriptTarget.ES6,
-	// 	allowNonTsExtensions: true,
-	// });
-
-	// extra libraries
-	// var libSource = [
-	// 	'declare class Facts {',
-	// 	'    /**',
-	// 	'     * Returns the next fact',
-	// 	'     */',
-	// 	'    static next():string',
-	// 	'}',
-	// ].join('\n');
-	// var libUri = 'ts:filename/facts.d.ts';
-	// monaco.languages.typescript.javascriptDefaults.addExtraLib(
-	// 	libSource,
-	// 	libUri
-	// );
-	// When resolving definitions and references, the editor will try to use created models.
-	// Creating a model for the library allows "peek definition/references" commands to work with the library.
-	// 	monaco.editor.createModel(
-	// 		libSource,
-	// 		'typescript',
-	// 		monaco.Uri.parse(libUri)
-	// 	);
-
-	// 	var jsCode = [
-	// 		'"use strict";',
-	// 		'',
-	// 		'class Chuck {',
-	// 		'    greet() {',
-	// 		'        return Facts.next();',
-	// 		'    }',
-	// 		'}',
-	// 	].join('\n');
-
-	// 	monaco.editor.create(document.getElementById('container'), {
-	// 		value: jsCode,
-	// 		language: 'javascript',
-	// 	});
-	// };
-
-	//getting syntax highlighting for javascript
-	// const editorWillMount = (monaco) => {
-	// 	monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-	// 		target: monaco.languages.typescript.ScriptTarget.ES6,
-	// 		allowNonTsExtensions: true,
-	// 	});
-	// };
-
-	const changeBySetState = () => {
-		setCode('// code changed by setState! \n');
-	};
-
 	const setDarkTheme = (e) => {
-		// setTheme('vs-dark');
 		e.preventDefault();
-
 		setTheme((prev) => (prev === 'vs-dark' ? 'hc-black' : 'vs-dark'));
 	};
 
 	const setLightTheme = (e) => {
 		e.preventDefault();
-		
 		setTheme('vs-light');
 	};
 
 	const options = {
-		// autoIndent: 'full',
-		// contextmenu: true,
-		// fontFamily: 'monospace',
-		// fontSize: 13,
-		// lineHeight: 24,
-		// hideCursorInOverviewRuler: true,
-		// matchBrackets: 'always',
-		// minimap: {
-		// 	enabled: true,
-		// },
-		// scrollbar: {
-		// 	horizontalSliderSize: 4,
-		// 	verticalSliderSize: 18,
-		// },
-
+		autoIndent: 'full',
+		contextmenu: true,
+		fontFamily: 'monospace',
+		fontSize: 13,
+		lineHeight: 24,
+		hideCursorInOverviewRuler: true,
+		matchBrackets: 'always',
+		minimap: {
+			enabled: true,
+		},
+		scrollbar: {
+			horizontalSliderSize: 4,
+			verticalSliderSize: 18,
+		},
 		selectOnLineNumbers: true,
 		roundedSelection: false,
 		readOnly: false,
@@ -136,9 +62,6 @@ const CodeEditor = () => {
 	return (
 		<div>
 			<div>
-				<button onClick={changeBySetState} type="button">
-					Change by setState
-				</button>
 				<button onClick={setDarkTheme} type="button">
 					Set dark theme ({theme === 'vs-dark' ? 'hc-black' : 'vs-dark'})
 				</button>
@@ -152,7 +75,7 @@ const CodeEditor = () => {
 			<hr />
 			<MonacoEditor
 				height="400"
-				language="javascript"
+				language={language}
 				// editorWillMount={editorWillMount}
 				value={code}
 				options={options}
@@ -198,8 +121,8 @@ const App = () => (
 		<CodeEditor />
 		<hr />
 		<hr />
-		{/* <h2>Another editor (showing a diff)</h2>
-		<DiffEditor /> */}
+		<h2>Another editor (showing a diff)</h2>
+		<DiffEditor />
 	</div>
 );
 
